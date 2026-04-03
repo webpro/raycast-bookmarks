@@ -2,6 +2,13 @@
 
 Raycast extension to manage bookmarks from a plain text file — search, open, add, and export for browser import.
 
+<p>
+  <img src="assets/1-open-bookmark.png" width="400" />
+  <img src="assets/2-open-bookmark-in.png" width="400" />
+  <img src="assets/3-add-bookmark.png" width="400" />
+  <img src="assets/4-export-bookmarks.png" width="400" />
+</p>
+
 ## Features
 
 - Plain text bookmarks file (tip: works with iCloud, Dropbox, Proton Drive, or any synced folder)

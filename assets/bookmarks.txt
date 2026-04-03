@@ -1,0 +1,18 @@
+[main]
+https://mail.proton.me 📌
+https://github.com
+https://npmx.dev 📌
+https://bsky.app 📌,bluesky,social
+
+[news]
+https://news.ycombinator.com hn
+https://lobste.rs
+https://arstechnica.com
+
+[dev]
+https://developers.raycast.com raycast
+https://developer.mozilla.org mdn,docs
+
+[tools]
+https://penpot.app
+https://linear.app
