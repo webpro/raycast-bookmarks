@@ -67,6 +67,42 @@ https://developer.mozilla.org mdn
 | Add Bookmark     | Add a new bookmark (pre-fills URL from clipboard or tab)  |
 | Export Bookmarks | Export bookmarks to Chrome, Firefox, and Zen              |
 
+## Keyboard shortcuts
+
+### Open Bookmark
+
+| Shortcut   | Action              |
+| ---------- | ------------------- |
+| `enter`    | Open URL            |
+| `cmd`+`c`  | Copy URL            |
+| `cmd`+`e`  | Edit bookmark       |
+| `ctrl`+`x` | Delete bookmark     |
+| `cmd`+`.`  | Edit bookmarks file |
+
+Open in a specific browser (only shown for browsers that are installed):
+
+| Shortcut  | Browser       |
+| --------- | ------------- |
+| `opt`+`a` | Arc           |
+| `opt`+`b` | Brave         |
+| `opt`+`c` | Chrome        |
+| `opt`+`d` | DuckDuckGo    |
+| `opt`+`e` | Edge          |
+| `opt`+`f` | Firefox       |
+| `opt`+`h` | Chrome Canary |
+| `opt`+`o` | Opera         |
+| `opt`+`p` | Pale Moon     |
+| `opt`+`r` | Chromium      |
+| `opt`+`s` | Safari        |
+| `opt`+`v` | Vivaldi       |
+| `opt`+`z` | Zen           |
+
+### Add Bookmark
+
+| Shortcut  | Action              |
+| --------- | ------------------- |
+| `cmd`+`.` | Edit bookmarks file |
+
 ## Configuration
 
 | Setting           | Description                                | Default |

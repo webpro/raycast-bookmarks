@@ -1,25 +1,25 @@
 import { useState, useCallback, useEffect } from 'react';
-import { ActionPanel, Action, Alert, Form, Icon, List, Toast, confirmAlert, getPreferenceValues, popToRoot, closeMainWindow, open, showToast, useNavigation } from '@raycast/api';
+import { ActionPanel, Action, Alert, Form, Icon, Keyboard, List, Toast, confirmAlert, getPreferenceValues, popToRoot, closeMainWindow, open, showToast, useNavigation } from '@raycast/api';
 import { getFavicon } from '@raycast/utils';
 import { readFile } from 'node:fs/promises';
 import { EOL } from 'node:os';
 import { getBookmarksPath, getBookmarkFolders, readBookmarks, removeBookmark, writeBookmarks } from './read-bookmarks';
 import { type BrowserApp, openInBrowserTab, getInstalledBrowsers } from 'browser-tab-bridge';
 
-const BROWSER_SHORTCUTS: Record<string, { modifiers: string[]; key: string }> = {
-  'com.apple.Safari': { modifiers: ['cmd'], key: 's' },
-  'com.google.Chrome': { modifiers: ['cmd'], key: 'c' },
-  'com.google.Chrome.canary': { modifiers: ['shift', 'cmd'], key: 'c' },
-  'com.brave.Browser': { modifiers: ['cmd'], key: 'b' },
-  'com.microsoft.edgemac': { modifiers: ['cmd'], key: 'g' },
-  'com.vivaldi.Vivaldi': { modifiers: ['cmd'], key: 'v' },
-  'company.thebrowser.Browser': { modifiers: ['cmd'], key: 'r' },
-  'com.operasoftware.Opera': { modifiers: ['cmd'], key: 'o' },
-  'org.chromium.Chromium': { modifiers: ['cmd'], key: 'h' },
-  'org.mozilla.firefox': { modifiers: ['cmd'], key: 'f' },
-  'org.mozilla.pale moon': { modifiers: ['cmd'], key: 'm' },
-  'app.zen-browser.zen': { modifiers: ['cmd'], key: 'z' },
-  'com.duckduckgo.macos.browser': { modifiers: ['cmd'], key: 'd' },
+const BROWSER_SHORTCUTS: Record<string, Keyboard.Shortcut> = {
+  'com.apple.Safari': { modifiers: ['opt'], key: 's' },
+  'com.google.Chrome': { modifiers: ['opt'], key: 'c' },
+  'com.google.Chrome.canary': { modifiers: ['opt'], key: 'h' },
+  'com.brave.Browser': { modifiers: ['opt'], key: 'b' },
+  'com.microsoft.edgemac': { modifiers: ['opt'], key: 'e' },
+  'com.vivaldi.Vivaldi': { modifiers: ['opt'], key: 'v' },
+  'company.thebrowser.Browser': { modifiers: ['opt'], key: 'a' },
+  'com.operasoftware.Opera': { modifiers: ['opt'], key: 'o' },
+  'org.chromium.Chromium': { modifiers: ['opt'], key: 'r' },
+  'org.mozilla.firefox': { modifiers: ['opt'], key: 'f' },
+  'org.mozilla.pale moon': { modifiers: ['opt'], key: 'p' },
+  'app.zen-browser.zen': { modifiers: ['opt'], key: 'z' },
+  'com.duckduckgo.macos.browser': { modifiers: ['opt'], key: 'd' },
 };
 
 function EditBookmarkForm({ url, tags, onEdit }: { url: string; tags: string[]; onEdit: () => void }) {
@@ -135,6 +135,11 @@ export default function Command() {
                   }}
                 />
               ))}
+              <Action.CopyToClipboard
+                title="Copy URL"
+                content={url}
+                shortcut={{ modifiers: ['cmd'], key: 'c' }}
+              />
               <Action.Push
                 title="Edit Bookmark"
                 icon={Icon.Pencil}
