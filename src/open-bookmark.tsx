@@ -1,5 +1,21 @@
 import { useState, useCallback, useEffect } from 'react';
-import { ActionPanel, Action, Alert, Form, Icon, Keyboard, List, Toast, confirmAlert, getPreferenceValues, popToRoot, closeMainWindow, open, showToast, useNavigation } from '@raycast/api';
+import {
+  ActionPanel,
+  Action,
+  Alert,
+  Form,
+  Icon,
+  Keyboard,
+  List,
+  Toast,
+  confirmAlert,
+  getPreferenceValues,
+  popToRoot,
+  closeMainWindow,
+  open,
+  showToast,
+  useNavigation,
+} from '@raycast/api';
 import { getFavicon } from '@raycast/utils';
 import { readFile } from 'node:fs/promises';
 import { EOL } from 'node:os';
@@ -40,8 +56,9 @@ function EditBookmarkForm({ url, tags, onEdit }: { url: string; tags: string[]; 
       return lineUrl !== url;
     });
 
-    const suffix = [...(values.pinned ? ['📌'] : []), ...(values.tags ? values.tags.split(/[\s,]+/) : [])].filter(Boolean);
-    const newLine = suffix.length > 0 ? `${values.url} ${suffix.join(', ')}` : values.url;
+    const _tags = [...(values.pinned ? ['📌'] : []), ...(values.tags ? values.tags.split(/[\s,]+/) : [])];
+    const tags = _tags.filter(Boolean);
+    const line = tags.length > 0 ? `${values.url} ${tags.join(', ')}` : values.url;
 
     const folderIndex = filtered.findIndex(line => line === `[${values.folder}]`);
     if (folderIndex === -1) {
@@ -52,7 +69,7 @@ function EditBookmarkForm({ url, tags, onEdit }: { url: string; tags: string[]; 
     while (insertIndex < filtered.length && filtered[insertIndex] && !filtered[insertIndex].startsWith('[')) {
       insertIndex++;
     }
-    filtered.splice(insertIndex, 0, newLine);
+    filtered.splice(insertIndex, 0, line);
 
     writeBookmarks(filtered);
     await showToast({ title: 'Bookmark updated' });
@@ -123,23 +140,19 @@ export default function Command() {
                   closeMainWindow();
                 }}
               />
-              {installedBrowsers.map((browser, index) => (
+              {installedBrowsers.map(browser => (
                 <Action
                   key={browser.bundleId}
                   title={`Open in ${browser.name}`}
                   shortcut={BROWSER_SHORTCUTS[browser.bundleId]}
                   onAction={async () => {
-                    await open(url, browser.bundleId);
+                    await (reuseTab ? openInBrowserTab(url, browser.bundleId) : open(url, browser.bundleId));
                     popToRoot();
                     closeMainWindow();
                   }}
                 />
               ))}
-              <Action.CopyToClipboard
-                title="Copy URL"
-                content={url}
-                shortcut={{ modifiers: ['cmd'], key: 'c' }}
-              />
+              <Action.CopyToClipboard title="Copy URL" content={url} shortcut={{ modifiers: ['cmd'], key: 'c' }} />
               <Action.Push
                 title="Edit Bookmark"
                 icon={Icon.Pencil}
