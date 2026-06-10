@@ -1,5 +1,6 @@
 import { getPreferenceValues } from '@raycast/api';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { readFile } from 'node:fs/promises';
 import { EOL, homedir } from 'node:os';
 import { dirname } from 'node:path';
 import type { Bookmark, BookmarkFolder } from './types';
@@ -38,13 +39,17 @@ function parseBookmarkLine(line: string): Bookmark {
   return { url, tags, title: getTitle(url) };
 }
 
-export function readBookmarks() {
-  ensureBookmarksFile();
-  const content = readFileSync(getBookmarksPath(), 'utf8');
+function parseBookmarks(content: string): Bookmark[] {
   return content
     .split(EOL)
     .filter(line => line.startsWith('http'))
     .map(parseBookmarkLine);
+}
+
+export async function readBookmarks(): Promise<Bookmark[]> {
+  ensureBookmarksFile();
+  const content = await readFile(getBookmarksPath(), { encoding: 'utf8', signal: AbortSignal.timeout(2000) });
+  return parseBookmarks(content);
 }
 
 export function getBookmarkFolders(): BookmarkFolder[] {

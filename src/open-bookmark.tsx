@@ -16,7 +16,7 @@ import {
   showToast,
   useNavigation,
 } from '@raycast/api';
-import { getFavicon } from '@raycast/utils';
+import { getFavicon, useCachedPromise } from '@raycast/utils';
 import { readFile } from 'node:fs/promises';
 import { EOL } from 'node:os';
 import { getBookmarksPath, getBookmarkFolders, readBookmarks, removeBookmark, writeBookmarks } from './read-bookmarks';
@@ -99,7 +99,20 @@ function EditBookmarkForm({ url, tags, onEdit }: { url: string; tags: string[]; 
 
 export default function Command() {
   const { reuseTab } = getPreferenceValues<{ reuseTab: boolean }>();
-  const [bookmarks, setBookmarks] = useState(() => readBookmarks());
+  const {
+    data: bookmarks = [],
+    isLoading,
+    revalidate,
+  } = useCachedPromise(readBookmarks, [], {
+    keepPreviousData: true,
+    onError: error => {
+      showToast({
+        style: Toast.Style.Failure,
+        title: 'Could not read bookmarks file',
+        message: error.message,
+      });
+    },
+  });
   const [installedBrowsers, setInstalledBrowsers] = useState<BrowserApp[]>([]);
 
   useEffect(() => {
@@ -108,21 +121,24 @@ export default function Command() {
       .catch(() => setInstalledBrowsers([]));
   }, []);
 
-  const handleDelete = useCallback(async (url: string) => {
-    if (
-      await confirmAlert({
-        title: 'Delete Bookmark?',
-        message: url,
-        primaryAction: { title: 'Delete', style: Alert.ActionStyle.Destructive },
-      })
-    ) {
-      removeBookmark(url);
-      setBookmarks(prev => prev.filter(b => b.url !== url));
-    }
-  }, []);
+  const handleDelete = useCallback(
+    async (url: string) => {
+      if (
+        await confirmAlert({
+          title: 'Delete Bookmark?',
+          message: url,
+          primaryAction: { title: 'Delete', style: Alert.ActionStyle.Destructive },
+        })
+      ) {
+        removeBookmark(url);
+        revalidate();
+      }
+    },
+    [revalidate],
+  );
 
   return (
-    <List searchBarPlaceholder="Search bookmarks">
+    <List isLoading={isLoading} searchBarPlaceholder="Search bookmarks">
       {bookmarks.map(({ url, tags, title }) => (
         <List.Item
           key={url}
@@ -157,7 +173,7 @@ export default function Command() {
                 title="Edit Bookmark"
                 icon={Icon.Pencil}
                 shortcut={{ modifiers: ['cmd'], key: 'e' }}
-                target={<EditBookmarkForm url={url} tags={tags} onEdit={() => setBookmarks(readBookmarks())} />}
+                target={<EditBookmarkForm url={url} tags={tags} onEdit={revalidate} />}
               />
               <Action
                 title="Delete Bookmark"
